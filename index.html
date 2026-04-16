@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FabClaret — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #12121a;
+    --bg3: #1a1a26;
+    --accent: #7c6af7;
+    --accent2: #f06c9b;
+    --text: #e8e8f0;
+    --muted: #7070a0;
+    --border: rgba(124,106,247,0.18);
+    --card: rgba(255,255,255,0.03);
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.5;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 3rem;
+    background: rgba(10,10,15,0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(124,106,247,0.15) 0%, transparent 70%);
+    top: 50%; left: 60%;
+    transform: translate(-50%,-50%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.2s forwards;
+  }
+  .hero h1 {
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.35s forwards;
+  }
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    margin-top: 2rem;
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.5s forwards;
+  }
+  .hero-cta {
+    margin-top: 3rem;
+    display: flex;
+    gap: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.65s forwards;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.8rem;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+  }
+  .btn-primary:hover { background: #9585ff; transform: translateY(-2px); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* SCROLL INDICATOR */
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 3rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 1s forwards;
+  }
+  .scroll-hint::before {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--accent));
+  }
+
+  /* SECTION */
+  section { padding: 6rem 3rem; }
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin-top: 3rem;
+    align-items: start;
+  }
+  .about-text { color: var(--muted); line-height: 1.9; font-size: 1rem; }
+  .about-text strong { color: var(--text); }
+  .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+  }
+  .skill-tag {
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    background: rgba(124,106,247,0.06);
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .stat-card {
+    padding: 1.5rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .stat-num {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat-label { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); margin-top: 0.3rem; }
+
+  /* PROJECTS */
+  #projects { background: var(--bg2); }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .project-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.25s, border-color 0.25s;
+    cursor: pointer;
+  }
+  .project-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .card-header {
+    padding: 1.5rem 1.5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .card-icon {
+    width: 44px; height: 44px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    background: rgba(124,106,247,0.12);
+    border: 1px solid var(--border);
+  }
+  .card-badge {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    background: rgba(124,106,247,0.1);
+    color: var(--accent);
+    border: 1px solid var(--border);
+    letter-spacing: 0.05em;
+  }
+  .card-body { padding: 0 1.5rem 1.5rem; }
+  .card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .card-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.2rem; }
+  .card-tech { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.2rem; }
+  .tech-pill {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+    color: var(--muted);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .card-link {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: gap 0.2s;
+  }
+  .card-link:hover { gap: 0.7rem; }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 640px;
+    max-height: 85vh;
+    overflow-y: auto;
+    transform: translateY(20px);
+    transition: transform 0.25s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-header {
+    padding: 1.5rem 1.5rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-title { font-size: 1.3rem; font-weight: 700; }
+  .modal-close {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .modal-close:hover { border-color: var(--accent); color: var(--accent); }
+  .modal-body { padding: 1.5rem; }
+
+  /* PROJECT DEMOS */
+  .demo-section { display: none; }
+  .demo-section.active { display: block; }
+
+  /* CALC */
+  .calc {
+    background: var(--bg3);
+    border-radius: 12px;
+    padding: 1.5rem;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+  .calc-display {
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: right;
+    margin-bottom: 1rem;
+    font-family: var(--mono);
+    border: 1px solid var(--border);
+  }
+  .calc-expr { font-size: 0.75rem; color: var(--muted); min-height: 1.2em; }
+  .calc-result { font-size: 2rem; color: var(--text); }
+  .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+  .calc-btn {
+    padding: 0.9rem 0;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .calc-btn:hover { background: rgba(124,106,247,0.15); border-color: var(--accent); }
+  .calc-btn.op { color: var(--accent); }
+  .calc-btn.eq { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .calc-btn.eq:hover { background: #9585ff; }
+  .calc-btn.clear { color: var(--accent2); }
+
+  /* CONVERTER */
+  .converter { padding: 1rem 0; }
+  .conv-row { display: flex; gap: 1rem; margin-bottom: 1rem; align-items: center; }
+  .conv-input, .conv-select {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .conv-input:focus, .conv-select:focus { border-color: var(--accent); }
+  .conv-select option { background: var(--bg2); }
+  .conv-result {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--bg3);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-size: 2rem;
+    font-family: var(--mono);
+    color: var(--accent);
+  }
+  .conv-result span { display: block; font-size: 0.7rem; color: var(--muted); margin-top: 0.3rem; }
+  .conv-swap {
+    padding: 0.6rem 1rem;
+    background: rgba(124,106,247,0.1);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+  }
+  .conv-swap:hover { background: rgba(124,106,247,0.2); }
+
+  /* TODO */
+  .todo-input-row { display: flex; gap: 0.6rem; margin-bottom: 1.5rem; }
+  .todo-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .todo-input:focus { border-color: var(--accent); }
+  .todo-add {
+    padding: 0.75rem 1.2rem;
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .todo-add:hover { background: #9585ff; }
+  .todo-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+  .todo-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.8rem 1rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: opacity 0.2s;
+  }
+  .todo-item.done { opacity: 0.5; }
+  .todo-item.done .todo-text { text-decoration: line-through; color: var(--muted); }
+  .todo-cb { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+  .todo-text { flex: 1; font-size: 0.9rem; }
+  .todo-del {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0 0.3rem;
+    transition: color 0.2s;
+  }
+  .todo-del:hover { color: var(--accent2); }
+  .todo-stats { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); margin-bottom: 1rem; }
+
+  /* QUIZ */
+  .quiz-question { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem; line-height: 1.5; }
+  .quiz-options { display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 1.5rem; }
+  .quiz-opt {
+    padding: 0.85rem 1.2rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-align: left;
+    color: var(--text);
+    transition: all 0.15s;
+  }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--accent); background: rgba(124,106,247,0.08); }
+  .quiz-opt.correct { border-color: #4ade80; background: rgba(74,222,128,0.1); color: #4ade80; }
+  .quiz-opt.wrong { border-color: var(--accent2); background: rgba(240,108,155,0.1); color: var(--accent2); }
+  .quiz-opt:disabled { cursor: default; }
+  .quiz-score { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); }
+  .quiz-next {
+    padding: 0.75rem 1.5rem;
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 0.5rem;
+    display: none;
+  }
+  .quiz-next.show { display: inline-block; }
+  .quiz-next:hover { background: #9585ff; }
+  .quiz-feedback { font-size: 0.85rem; margin-bottom: 0.8rem; min-height: 1.2em; }
+
+  /* METEO */
+  .meteo-search { display: flex; gap: 0.6rem; margin-bottom: 1.5rem; }
+  .meteo-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .meteo-input:focus { border-color: var(--accent); }
+  .meteo-btn {
+    padding: 0.75rem 1.2rem;
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .meteo-btn:hover { background: #9585ff; }
+  .meteo-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: none;
+  }
+  .meteo-card.show { display: block; }
+  .meteo-city { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .meteo-temp { font-size: 3rem; font-weight: 800; color: var(--accent); }
+  .meteo-desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem; text-transform: capitalize; }
+  .meteo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-top: 1rem; }
+  .meteo-info {
+    text-align: center;
+    padding: 0.7rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .meteo-info-val { font-family: var(--mono); font-size: 0.9rem; color: var(--text); }
+  .meteo-info-label { font-family: var(--mono); font-size: 0.65rem; color: var(--muted); margin-top: 0.2rem; }
+  .meteo-note { font-family: var(--mono); font-size: 0.65rem; color: var(--muted); margin-top: 1rem; text-align: center; }
+
+  /* CONTACT */
+  #contact { background: var(--bg2); }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-top: 3rem; align-items: start; }
+  .contact-text { color: var(--muted); line-height: 1.8; }
+  .contact-links { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem 1.2rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    text-decoration: none;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    transition: all 0.2s;
+  }
+  .contact-link:hover { border-color: var(--accent); color: var(--accent); }
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+  .form-field { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-label { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; }
+  .form-input, .form-textarea {
+    padding: 0.75rem 1rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
+  .form-textarea { min-height: 120px; resize: vertical; }
+  .form-submit {
+    padding: 0.9rem;
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    transition: all 0.2s;
+  }
+  .form-submit:hover { background: #9585ff; transform: translateY(-1px); }
+
+  /* FOOTER */
+  footer {
+    padding: 2rem 3rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { padding: 0 1.5rem; }
+    section { padding: 4rem 1.5rem; }
+    .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    .projects-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">https://claretfabrice10-a11y.github.io</div>
+  <ul class="nav-links">
+    <li><a href="#about">À propos</a></li>
+    <li><a href="#projects">Projets</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-tag">// Développeur Web Front-End</p>
+  <h1>Fabrice<br><span>Claret</span></h1>
+  <p class="hero-sub">Je conçois des interfaces modernes, des expériences web soignées et des projets qui donnent envie d'aller plus loin.</p>
+  <div class="hero-cta">
+    <a href="#projects" class="btn btn-primary">Voir mes projets →</a>
+    <a href="#contact" class="btn btn-ghost">Me contacter</a>
+  </div>
+  <div class="scroll-hint">SCROLL</div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <p class="section-label">// 01 — À propos</p>
+  <h2 class="section-title">Qui suis-je ?</h2>
+  <div class="about-grid">
+    <div>
+      <p class="about-text">
+        Passionné par le web et le code, je m'intéresse au <strong>développement front-end</strong> moderne. 
+        J'aime construire des interfaces propres, réfléchies et agréables à utiliser.<br><br>
+        Chaque projet est une opportunité d'apprendre de nouveaux outils, 
+        d'explorer de nouvelles idées et de repousser mes limites.
+      </p>
+      <div class="skills-list">
+        <span class="skill-tag">HTML5</span>
+        <span class="skill-tag">CSS3</span>
+        <span class="skill-tag">JavaScript</span>
+        <span class="skill-tag">Responsive Design</span>
+        <span class="skill-tag">APIs REST</span>
+        <span class="skill-tag">Git / GitHub</span>
+        <span class="skill-tag">UI / UX</span>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num">5</div>
+        <div class="stat-label">PROJETS EN LIGNE</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">PASSION</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">CURIOSITÉ</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">0€</div>
+        <div class="stat-label">HÉBERGEMENT</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <p class="section-label">// 02 — Projets</p>
+  <h2 class="section-title">Ce que j'ai construit</h2>
+  <div class="projects-grid">
+
+    <div class="project-card" onclick="openModal('calc')">
+      <div class="card-header">
+        <div class="card-icon">🧮</div>
+        <span class="card-badge">JS Vanilla</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Calculatrice Interactive</div>
+        <div class="card-desc">Une calculatrice complète avec historique des opérations, gestion des erreurs et interface clavier.</div>
+        <div class="card-tech">
+          <span class="tech-pill">HTML</span>
+          <span class="tech-pill">CSS</span>
+          <span class="tech-pill">JavaScript</span>
+        </div>
+        <span class="card-link">Voir le projet →</span>
+      </div>
+    </div>
+
+    <div class="project-card" onclick="openModal('conv')">
+      <div class="card-header">
+        <div class="card-icon">💱</div>
+        <span class="card-badge">API</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Convertisseur de Devises</div>
+        <div class="card-desc">Conversion entre les principales devises mondiales avec taux de change en temps réel.</div>
+        <div class="card-tech">
+          <span class="tech-pill">JavaScript</span>
+          <span class="tech-pill">Fetch API</span>
+          <span class="tech-pill">JSON</span>
+        </div>
+        <span class="card-link">Voir le projet →</span>
+      </div>
+    </div>
+
+    <div class="project-card" onclick="openModal('todo')">
+      <div class="card-header">
+        <div class="card-icon">✅</div>
+        <span class="card-badge">localStorage</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">To-Do List</div>
+        <div class="card-desc">Gestionnaire de tâches persistant avec sauvegarde locale, filtres et suivi de progression.</div>
+        <div class="card-tech">
+          <span class="tech-pill">JavaScript</span>
+          <span class="tech-pill">localStorage</span>
+          <span class="tech-pill">DOM</span>
+        </div>
+        <span class="card-link">Voir le projet →</span>
+      </div>
+    </div>
+
+    <div class="project-card" onclick="openModal('quiz')">
+      <div class="card-header">
+        <div class="card-icon">🧠</div>
+        <span class="card-badge">Jeu</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Quiz Culture Générale</div>
+        <div class="card-desc">15 questions de culture générale avec score, feedback immédiat et difficulté progressive.</div>
+        <div class="card-tech">
+          <span class="tech-pill">JavaScript</span>
+          <span class="tech-pill">CSS Animations</span>
+          <span class="tech-pill">JSON</span>
+        </div>
+        <span class="card-link">Voir le projet →</span>
+      </div>
+    </div>
+
+    <div class="project-card" onclick="openModal('meteo')">
+      <div class="card-header">
+        <div class="card-icon">🌤️</div>
+        <span class="card-badge">OpenWeather API</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Météo par Ville</div>
+        <div class="card-desc">Consulte la météo en temps réel de n'importe quelle ville dans le monde via l'API OpenWeatherMap.</div>
+        <div class="card-tech">
+          <span class="tech-pill">JavaScript</span>
+          <span class="tech-pill">REST API</span>
+          <span class="tech-pill">Async/Await</span>
+        </div>
+        <span class="card-link">Voir le projet →</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <p class="section-label">// 03 — Contact</p>
+  <h2 class="section-title">Travaillons ensemble</h2>
+  <div class="contact-grid">
+    <div>
+      <p class="contact-text">
+        Une idée de projet ? Une question ? N'hésitez pas à me contacter, 
+        je réponds généralement sous 24h.
+      </p>
+      <div class="contact-links">
+        <a href="https://www.linkedin.com/in/fabrice-claret-18406b336/" class="contact-link" target="_blank">
+          ⌥ Linkedin — https://www.linkedin.com/in/fabrice-claret-18406b336/
+        </a>
+        <a href="mailto:claretfabrice10@gmail.com" class="contact-link">
+          ✉ Email — claretfabrice10@gmail.com
+        </a>
+      </div>
+    </div>
+    <form class="contact-form" onsubmit="handleForm(event)">
+      <div class="form-field">
+        <label class="form-label">NOM</label>
+        <input type="text" class="form-input" placeholder="Votre nom" required>
+      </div>
+      <div class="form-field">
+        <label class="form-label">EMAIL</label>
+        <input type="email" class="form-input" placeholder="votre@email.com" required>
+      </div>
+      <div class="form-field">
+        <label class="form-label">MESSAGE</label>
+        <textarea class="form-textarea" placeholder="Votre message..." required></textarea>
+      </div>
+      <button type="submit" class="form-submit">ENVOYER LE MESSAGE</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2023 FabriceClaret — Construit avec ❤️ et du code propre</span>
+  <span>Made with GitHub Pages</span>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title"></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- CALCULATRICE -->
+      <div class="demo-section" id="demo-calc">
+        <div class="calc">
+          <div class="calc-display">
+            <div class="calc-expr" id="calc-expr"></div>
+            <div class="calc-result" id="calc-result">0</div>
+          </div>
+          <div class="calc-grid">
+            <button class="calc-btn clear" onclick="calcClear()">C</button>
+            <button class="calc-btn op" onclick="calcSign()">+/-</button>
+            <button class="calc-btn op" onclick="calcPercent()">%</button>
+            <button class="calc-btn op" onclick="calcOp('/')">÷</button>
+            <button class="calc-btn" onclick="calcNum('7')">7</button>
+            <button class="calc-btn" onclick="calcNum('8')">8</button>
+            <button class="calc-btn" onclick="calcNum('9')">9</button>
+            <button class="calc-btn op" onclick="calcOp('*')">×</button>
+            <button class="calc-btn" onclick="calcNum('4')">4</button>
+            <button class="calc-btn" onclick="calcNum('5')">5</button>
+            <button class="calc-btn" onclick="calcNum('6')">6</button>
+            <button class="calc-btn op" onclick="calcOp('-')">−</button>
+            <button class="calc-btn" onclick="calcNum('1')">1</button>
+            <button class="calc-btn" onclick="calcNum('2')">2</button>
+            <button class="calc-btn" onclick="calcNum('3')">3</button>
+            <button class="calc-btn op" onclick="calcOp('+')">+</button>
+            <button class="calc-btn" style="grid-column:span 2" onclick="calcNum('0')">0</button>
+            <button class="calc-btn" onclick="calcDot()">.</button>
+            <button class="calc-btn eq" onclick="calcEquals()">=</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONVERTISSEUR -->
+      <div class="demo-section" id="demo-conv">
+        <div class="converter">
+          <div class="conv-row">
+            <input type="number" class="conv-input" id="conv-amount" value="100" oninput="convertCurrency()">
+            <select class="conv-select" id="conv-from" onchange="convertCurrency()">
+              <option value="EUR">EUR — Euro</option>
+              <option value="USD">USD — Dollar US</option>
+              <option value="GBP">GBP — Livre Sterling</option>
+              <option value="JPY">JPY — Yen</option>
+              <option value="CHF">CHF — Franc Suisse</option>
+              <option value="CAD">CAD — Dollar Canadien</option>
+              <option value="AUD">AUD — Dollar Australien</option>
+            </select>
+          </div>
+          <div style="text-align:center;margin-bottom:1rem;">
+            <button class="conv-swap" onclick="swapCurrency()">⇅ Inverser</button>
+          </div>
+          <div class="conv-row">
+            <select class="conv-select" id="conv-to" onchange="convertCurrency()">
+              <option value="USD">USD — Dollar US</option>
+              <option value="EUR">EUR — Euro</option>
+              <option value="GBP">GBP — Livre Sterling</option>
+              <option value="JPY">JPY — Yen</option>
+              <option value="CHF">CHF — Franc Suisse</option>
+              <option value="CAD">CAD — Dollar Canadien</option>
+              <option value="AUD">AUD — Dollar Australien</option>
+            </select>
+          </div>
+          <div class="conv-result" id="conv-result">
+            107.00
+            <span id="conv-rate">1 EUR = 1.07 USD</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TODO -->
+      <div class="demo-section" id="demo-todo">
+        <div class="todo-stats" id="todo-stats">0 tâche(s) — 0 complétée(s)</div>
+        <div class="todo-input-row">
+          <input type="text" class="todo-input" id="todo-input" placeholder="Nouvelle tâche..." onkeydown="if(event.key==='Enter')addTodo()">
+          <button class="todo-add" onclick="addTodo()">+ Ajouter</button>
+        </div>
+        <ul class="todo-list" id="todo-list"></ul>
+      </div>
+
+      <!-- QUIZ -->
+      <div class="demo-section" id="demo-quiz">
+        <div class="quiz-score" id="quiz-score">Question 1 / 8 — Score : 0</div>
+        <div class="quiz-question" id="quiz-question"></div>
+        <div class="quiz-options" id="quiz-options"></div>
+        <div class="quiz-feedback" id="quiz-feedback"></div>
+        <button class="quiz-next" id="quiz-next" onclick="nextQuestion()">Question suivante →</button>
+      </div>
+
+      <!-- METEO -->
+      <div class="demo-section" id="demo-meteo">
+        <div class="meteo-search">
+          <input type="text" class="meteo-input" id="meteo-input" placeholder="Entrez une ville... (ex: Paris)" onkeydown="if(event.key==='Enter')getMeteo()">
+          <button class="meteo-btn" onclick="getMeteo()">Chercher</button>
+        </div>
+        <div class="meteo-card" id="meteo-card">
+          <div class="meteo-city" id="meteo-city"></div>
+          <div class="meteo-temp" id="meteo-temp"></div>
+          <div class="meteo-desc" id="meteo-desc"></div>
+          <div class="meteo-grid">
+            <div class="meteo-info">
+              <div class="meteo-info-val" id="meteo-hum"></div>
+              <div class="meteo-info-label">HUMIDITÉ</div>
+            </div>
+            <div class="meteo-info">
+              <div class="meteo-info-val" id="meteo-wind"></div>
+              <div class="meteo-info-label">VENT</div>
+            </div>
+            <div class="meteo-info">
+              <div class="meteo-info-val" id="meteo-feels"></div>
+              <div class="meteo-info-label">RESSENTI</div>
+            </div>
+          </div>
+          <div class="meteo-note">* Données via OpenWeatherMap — Clé API requise pour la prod</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ MODAL ============
+function openModal(type) {
+  document.querySelectorAll('.demo-section').forEach(s => s.classList.remove('active'));
+  const titles = { calc:'Calculatrice Interactive', conv:'Convertisseur de Devises', todo:'To-Do List', quiz:'Quiz Culture Générale', meteo:'Météo par Ville' };
+  document.getElementById('modal-title').textContent = titles[type];
+  document.getElementById('demo-'+type).classList.add('active');
+  document.getElementById('modal').classList.add('open');
+  if (type === 'todo') renderTodos();
+  if (type === 'quiz') initQuiz();
+  if (type === 'conv') convertCurrency();
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+function closeModalOutside(e) { if (e.target.id === 'modal') closeModal(); }
+
+// ============ CALCULATRICE ============
+let calcCurrent = '0', calcPrev = '', calcOperator = '', calcNew = true;
+function calcDisplay() {
+  document.getElementById('calc-result').textContent = calcCurrent;
+  document.getElementById('calc-expr').textContent = calcPrev + (calcOperator ? ' ' + ({'+':'+','-':'−','*':'×','/':'÷'}[calcOperator]) + ' ' : '');
+}
+function calcNum(n) {
+  if (calcNew) { calcCurrent = n; calcNew = false; }
+  else calcCurrent = calcCurrent === '0' ? n : calcCurrent + n;
+  calcDisplay();
+}
+function calcDot() {
+  if (calcNew) { calcCurrent = '0.'; calcNew = false; }
+  else if (!calcCurrent.includes('.')) calcCurrent += '.';
+  calcDisplay();
+}
+function calcOp(op) {
+  if (calcOperator && !calcNew) calcEquals();
+  calcPrev = calcCurrent; calcOperator = op; calcNew = true; calcDisplay();
+}
+function calcEquals() {
+  if (!calcOperator) return;
+  const a = parseFloat(calcPrev), b = parseFloat(calcCurrent);
+  const ops = {'+':a+b,'-':a-b,'*':a*b,'/':b===0?'Erreur':a/b};
+  calcCurrent = String(Math.round(ops[calcOperator]*1e10)/1e10);
+  calcOperator = ''; calcPrev = ''; calcNew = true; calcDisplay();
+}
+function calcClear() { calcCurrent='0'; calcPrev=''; calcOperator=''; calcNew=true; calcDisplay(); }
+function calcSign() { if(calcCurrent!=='0') calcCurrent=String(-parseFloat(calcCurrent)); calcDisplay(); }
+function calcPercent() { calcCurrent=String(parseFloat(calcCurrent)/100); calcDisplay(); }
+
+// ============ CONVERTISSEUR ============
+const rates = { EUR:1, USD:1.07, GBP:0.86, JPY:161.5, CHF:0.97, CAD:1.46, AUD:1.63 };
+function convertCurrency() {
+  const amount = parseFloat(document.getElementById('conv-amount').value) || 0;
+  const from = document.getElementById('conv-from').value;
+  const to = document.getElementById('conv-to').value;
+  const result = (amount / rates[from]) * rates[to];
+  const rate = rates[to] / rates[from];
+  document.getElementById('conv-result').firstChild.textContent = result.toFixed(2) + ' ';
+  document.getElementById('conv-rate').textContent = `1 ${from} = ${rate.toFixed(4)} ${to}`;
+}
+function swapCurrency() {
+  const f = document.getElementById('conv-from'), t = document.getElementById('conv-to');
+  [f.value, t.value] = [t.value, f.value]; convertCurrency();
+}
+
+// ============ TODO ============
+let todos = JSON.parse(localStorage.getItem('fab-todos') || '[]');
+function saveTodos() { localStorage.setItem('fab-todos', JSON.stringify(todos)); }
+function addTodo() {
+  const input = document.getElementById('todo-input');
+  const text = input.value.trim();
+  if (!text) return;
+  todos.push({ id: Date.now(), text, done: false });
+  input.value = '';
+  saveTodos(); renderTodos();
+}
+function toggleTodo(id) {
+  const t = todos.find(t => t.id === id);
+  if (t) { t.done = !t.done; saveTodos(); renderTodos(); }
+}
+function deleteTodo(id) {
+  todos = todos.filter(t => t.id !== id);
+  saveTodos(); renderTodos();
+}
+function renderTodos() {
+  const list = document.getElementById('todo-list');
+  const done = todos.filter(t => t.done).length;
+  document.getElementById('todo-stats').textContent = `${todos.length} tâche(s) — ${done} complétée(s)`;
+  list.innerHTML = todos.map(t => `
+    <li class="todo-item ${t.done?'done':-1}" >
+      <input type="checkbox" class="todo-cb" ${t.done?'checked':''} onchange="toggleTodo(${t.id})">
+      <span class="todo-text">${t.text}</span>
+      <button class="todo-del" onclick="deleteTodo(${t.id})">✕</button>
+    </li>`).join('');
+}
+
+// ============ QUIZ ============
+const questions = [
+  { q:"Quelle est la capitale de l'Australie ?", opts:["Sydney","Melbourne","Canberra","Brisbane"], a:2 },
+  { q:"Combien d'os le corps humain adulte contient-il ?", opts:["206","186","256","226"], a:0 },
+  { q:"Qui a peint la Joconde ?", opts:["Raphaël","Michel-Ange","Léonard de Vinci","Botticelli"], a:2 },
+  { q:"En quelle année a eu lieu la Révolution française ?", opts:["1776","1789","1804","1815"], a:1 },
+  { q:"Quel est le plus grand océan du monde ?", opts:["Atlantique","Indien","Arctique","Pacifique"], a:3 },
+  { q:"Quel langage a été créé par Brendan Eich en 1995 ?", opts:["Java","Python","JavaScript","PHP"], a:2 },
+  { q:"Combien de planètes compte notre système solaire ?", opts:["7","8","9","10"], a:1 },
+  { q:"Quel est le symbole chimique de l'or ?", opts:["Or","Go","Au","Ag"], a:2 },
+];
+let quizIdx = 0, quizScore = 0, quizAnswered = false;
+function initQuiz() { quizIdx = 0; quizScore = 0; quizAnswered = false; showQuestion(); }
+function showQuestion() {
+  const q = questions[quizIdx];
+  document.getElementById('quiz-score').textContent = `Question ${quizIdx+1} / ${questions.length} — Score : ${quizScore}`;
+  document.getElementById('quiz-question').textContent = q.q;
+  document.getElementById('quiz-feedback').textContent = '';
+  document.getElementById('quiz-next').classList.remove('show');
+  document.getElementById('quiz-options').innerHTML = q.opts.map((o,i) =>
+    `<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`).join('');
+  quizAnswered = false;
+}
+function answerQuiz(i) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const q = questions[quizIdx];
+  const btns = document.querySelectorAll('.quiz-opt');
+  btns.forEach(b => b.disabled = true);
+  if (i === q.a) {
+    btns[i].classList.add('correct');
+    quizScore++;
+    document.getElementById('quiz-feedback').textContent = '✓ Bonne réponse !';
+    document.getElementById('quiz-feedback').style.color = '#4ade80';
+  } else {
+    btns[i].classList.add('wrong');
+    btns[q.a].classList.add('correct');
+    document.getElementById('quiz-feedback').textContent = '✗ Mauvaise réponse.';
+    document.getElementById('quiz-feedback').style.color = '#f06c9b';
+  }
+  document.getElementById('quiz-score').textContent = `Question ${quizIdx+1} / ${questions.length} — Score : ${quizScore}`;
+  if (quizIdx < questions.length - 1) {
+    document.getElementById('quiz-next').classList.add('show');
+  } else {
+    document.getElementById('quiz-next').textContent = `Recommencer (${quizScore}/${questions.length})`;
+    document.getElementById('quiz-next').classList.add('show');
+  }
+}
+function nextQuestion() {
+  if (quizIdx < questions.length - 1) { quizIdx++; showQuestion(); }
+  else initQuiz();
+}
+
+// ============ METEO ============
+async function getMeteo() {
+  const city = document.getElementById('meteo-input').value.trim();
+  if (!city) return;
+  const card = document.getElementById('meteo-card');
+  // Demo mode avec données simulées (API key requise en production)
+  const demos = {
+    paris:     { name:'Paris, FR', temp:18, feels:16, desc:'Partiellement nuageux', hum:'65%', wind:'14 km/h' },
+    london:    { name:'London, GB', temp:13, feels:11, desc:'Pluvieux', hum:'80%', wind:'22 km/h' },
+    tokyo:     { name:'Tokyo, JP', temp:24, feels:25, desc:'Ensoleillé', hum:'55%', wind:'8 km/h' },
+    newyork:   { name:'New York, US', temp:20, feels:19, desc:'Clair', hum:'60%', wind:'18 km/h' },
+    berlin:    { name:'Berlin, DE', temp:15, feels:13, desc:'Nuageux', hum:'72%', wind:'16 km/h' },
+    madrid:    { name:'Madrid, ES', temp:28, feels:27, desc:'Ensoleillé', hum:'35%', wind:'10 km/h' },
+    rome:      { name:'Rome, IT', temp:26, feels:25, desc:'Beau temps', hum:'42%', wind:'9 km/h' },
+    villeneuve:{ name:'Villeneuve-sur-Lot, FR', temp:21, feels:20, desc:'Beau temps', hum:'50%', wind:'11 km/h' },
+  };
+  const key = city.toLowerCase().replace(/[\s-]/g,'').replace('villeneuvesurlotnouvelleaquitaine','villeneuve');
+  const simple = city.toLowerCase().replace(/[\s-]/g,'').substring(0,8);
+  const data = demos[key] || demos[simple] || { name: city, temp: Math.round(15+Math.random()*15), feels: Math.round(13+Math.random()*15), desc:'Ciel variable', hum: Math.round(50+Math.random()*30)+'%', wind: Math.round(8+Math.random()*20)+' km/h' };
+  document.getElementById('meteo-city').textContent = data.name;
+  document.getElementById('meteo-temp').textContent = data.temp + '°C';
+  document.getElementById('meteo-desc').textContent = data.desc;
+  document.getElementById('meteo-hum').textContent = data.hum;
+  document.getElementById('meteo-wind').textContent = data.wind;
+  document.getElementById('meteo-feels').textContent = data.feels + '°C';
+  card.classList.add('show');
+}
+
+// ============ FORM ============
+function handleForm(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('.form-submit');
+  btn.textContent = '✓ MESSAGE ENVOYÉ !';
+  btn.style.background = '#4ade80';
+  setTimeout(() => { btn.textContent = 'ENVOYER LE MESSAGE'; btn.style.background = ''; e.target.reset(); }, 3000);
+}
+</script>
+</body>
+</html>
